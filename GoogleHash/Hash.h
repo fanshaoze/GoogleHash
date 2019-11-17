@@ -2,32 +2,35 @@
 #define HASH_H_INCLUDED
 #include <iostream>
 #include<math.h>
+#include <ctime>
+#include <fstream>
+#include <string>
 using namespace std;
 
 
-template <class T>
+
 class lexicon {
 public:
 	int* Hashtable;
-	T* Wordstable;
+	char* Wordstable;
 	int Htable_size;
 	int Wtable_size;
 	int letter_num;
 	int Record_num;
 	int incf;
-	int timesf;
+	int Lfactor;
 	//char* w;
 };
 
 
-template <class T>
+
 class Hash{
 
 public:
-	Hash(int init_size = 10, string str = " ", int init_timesf = 15, int init_incf = 2, int init_FCode = 0);//?????????
+	Hash(int init_size = 10, string str = " ",int init_Lfactor = 15, int init_incf = 2, int init_FCode = 0);//?????????
 	~Hash();
 
-	void HashCreate(); // Create T, A. T will have m slots; A should be 15m
+	void HashCreate(); // Create L, A. T will have m slots; A should be 15m
 	bool HashEmpty(); // Check if L is empty
 	
 	bool HashFull(); // Check if L can maintain more words
@@ -47,9 +50,11 @@ public:
 	void HashAdjust();
 	void WordsAdjust();
 
+	void HashOperation(istream& in, ostream& out);
+
 
 	//-------------------------------------------------------------------
-	lexicon<char> L;
+	lexicon L;
 	string w;
 	int Function_Code;
 	//int 

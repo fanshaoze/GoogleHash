@@ -1,27 +1,29 @@
 #include <iostream>
-#include <ctime>
+#include <fstream>
 #include "Hash.h"
-#include<math.h>
 
 
-template <class T>
-Hash<T>::Hash(int init_size, string str, int init_incf, int init_timesf, int init_FCode) {
+
+Hash::Hash(int init_size, string str, int init_incf, int init_Lfactor, int init_FCode) {
 	L.Hashtable = NULL;
-	L.Wordstable = str;
+
+	//L.Wordstable = (char*)malloc((str.length() + 1) * sizeof(char));
+	//str.copy(L.Wordstable, str.length(), 0);
+
 	L.Htable_size = init_size;
 	L.incf = init_incf;
-	L.timesf = init_timesf;
-	L.Wtable_size = L.timesf * L.Htable_size;
+	L.Lfactor = init_Lfactor;
+	L.Wtable_size = L.Lfactor * L.Htable_size;
 	L.Record_num = 0;
 	Function_Code = init_FCode;
 }
-template <class T>
-Hash<T>::~Hash() {
+
+Hash::~Hash() {
 	delete L.Wordstable;
 	delete L.Hashtable;
 }
-template <class T>
-void Hash<T>::HashCreate() // Create T, A. T will have m slots; A should be 15m
+
+void Hash::HashCreate() // Create T, A. T will have m slots; A should be 15m
 {
 	L.Wordstable = new char[L.Wtable_size];
 	for (int i = 0; i < L.Wtable_size; i++)
@@ -29,31 +31,31 @@ void Hash<T>::HashCreate() // Create T, A. T will have m slots; A should be 15m
 	L.Hashtable = new int[L.Htable_size];
 	for (int i = 0; i < L.Htable_size; i++)
 		L.Hashtable[i] = -1;
-
 }
-template <class T>
-bool Hash<T>::HashEmpty() // Check if L is empty
+
+bool Hash::HashEmpty() // Check if L is empty
 {
 	//find out whether hash is full or not 
 	return L.Record_num == 0 ? true : false;
 }
-template <class T>
-bool Hash<T>::HashFull() // Check if L can maintain more words
+
+bool Hash::HashFull() // Check if L can maintain more words
 {
 	return L.Record_num >= L.Htable_size ? true : false;
 }
-template <class T>
-bool Hash<T>::Wtable_Not_Enough() // Check if L can maintain more words
+
+bool Hash::Wtable_Not_Enough() // Check if L can maintain more words
 {
-	return w.length + 1 >= L.Wtable_size - L.letter_num ? true : false;
+
+	return w.length() + 1 >= L.Wtable_size - L.letter_num ? true : false;
 }
-template <class T>
-void Hash<T>::HashPrint() // Print of L
+
+void Hash::HashPrint() // Print of L
 {
 
 }
-template <class T>
-bool Hash<T>::HashInsert() //Insert w into L (and T and A)
+
+bool Hash::HashInsert() //Insert w into L (and T and A)
 {
 	/*actually it should be a......recursive function......we need to write down 
 	
@@ -62,13 +64,13 @@ bool Hash<T>::HashInsert() //Insert w into L (and T and A)
 		HashAdjust();
 
 	}
-	HashFunction();
+	//HashFunction();
 	L.Record_num ++;
-	L.letter_num += w.length + 1;
+	L.letter_num += w.length() + 1;
 	return 0;
 }
-template <class T>
-int Hash<T>::HashDelete() //Delete w from L (but not necessarily from A)
+
+int Hash::HashDelete() //Delete w from L (but not necessarily from A)
 {
 	/*
 	we just need to delete one in the L. But according to the input here, if not we assign no 
@@ -78,8 +80,8 @@ int Hash<T>::HashDelete() //Delete w from L (but not necessarily from A)
 		L.Hashtable[HashIndex] = -1;
 	return 0;
 }
-template <class T>
-int Hash<T>::HashSearch() //Search for string in L (and this means T)
+
+int Hash::HashSearch() //Search for string in L (and this means T)
 {
 	int HashIndex = -1;
 	//diectly search -1 for not get one
@@ -93,8 +95,8 @@ int Hash<T>::HashSearch() //Search for string in L (and this means T)
 	}
 	return -1;
 }
-template <class T>
-void Hash<T>::HashBatch(string filename)
+
+void Hash::HashBatch(string filename)
 {
 	/*
 	Get the file stream and get every line, every line is a command, using switch case,
@@ -102,22 +104,21 @@ void Hash<T>::HashBatch(string filename)
 	*/
 }
 
-template <class T>
+
 /* when we need to add an word in wordlist, and wordlist is full, then we need to
 adjust the length of word table and hash table, the method is evertime we double
 the size of wordlist, and we adjust the length of hash table. Also, we reculculate
 every stored element in hash table.
 We need to keep that the size of hash table and the size of words satisfy the 15 times.
 */
-void Hash<T>::HashAdjust()
+void Hash::HashAdjust()
 {
 	//double the size of the Hash table and readjust the Hash
 	L.Htable_size = L.incf * L.Htable_size + 1;
 	
 }
 
-template <class T>
-void Hash<T>::WordsAdjust()
+void Hash::WordsAdjust()
 {
 	//double the size of A and readjust the size of Hash 
 	
@@ -125,17 +126,17 @@ void Hash<T>::WordsAdjust()
 
 }
 
-template <class T>
-int Hash<T>::HashFunction(int WordSum, int factor)
+
+int Hash::HashFunction(int WordSum, int factor)
 {
 	int result = 0;
 	switch (Function_Code)
 	{
 	case 0:
-		result = (WordSum % L.Htable_size + factor*factor) % L.Htable_size;
+		result = (WordSum % L.Htable_size + L.Lfactor* L.Lfactor) % L.Htable_size;
 		break;
 	case 1:
-		result = (WordSum % L.Htable_size + factor) % L.Htable_size;
+		result = (WordSum % L.Htable_size + L.Lfactor) % L.Htable_size;
 		break;
 	default:
 		break;
@@ -144,11 +145,70 @@ int Hash<T>::HashFunction(int WordSum, int factor)
 
 }
 
-template <class T>
-int Hash<T>::AsciiSum()
+
+int Hash::AsciiSum()
 {
 	int WordSum = 0;
-	for (int i = 0; i < w.length; i++)
+	for (int i = 0; i < w.length(); i++)
 		WordSum += w[i];
 	return WordSum;
 }
+
+
+void Hash::HashOperation(istream& in, ostream& out)
+{
+	int i = 0;
+	string Command;
+	string para;
+	string CommandLine = " ";
+
+	for (;;) {
+		CommandLine = in.get();
+		if (in.eof() || in.bad()) return;
+
+		cout << "CommandLine: " << CommandLine << endl;
+		cout << "Command size: " << CommandLine.length() << endl;
+		for (i = 0; i < CommandLine.length(); i++) {
+			if (CommandLine.at(i) == ' ') break;
+		}
+		Command = CommandLine.substr(0, i + 1);
+		cout << "Command: " << CommandLine << endl;
+		if (Command == "13") {//print
+			if (Command.length() != CommandLine.length()) {
+				return;
+			}
+			else {
+				HashPrint();
+			}
+		}
+		else {
+			para = CommandLine.substr(i + 1, CommandLine.length());
+			if (Command == "14") {
+				for (i = 0; i < para.length(); i++) {
+					if (!isdigit(para[i])) return;
+				}
+				L.Htable_size = stoi(para);
+				HashCreate();
+			}
+			else {
+				w = para;
+				if (Command == "10") {
+					HashInsert();
+				}
+				else if (Command == "11") {
+					HashDelete();
+				}
+				else if (Command == "12") {
+					HashSearch();
+				}
+				else if (Command == "15") {
+					continue;
+				}
+				else return;
+			}
+		}
+	}
+	return;
+}
+
+
