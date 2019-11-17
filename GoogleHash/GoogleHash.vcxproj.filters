@@ -26,5 +26,8 @@
     <ClCompile Include="Test.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

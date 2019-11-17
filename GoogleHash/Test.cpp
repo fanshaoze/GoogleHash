@@ -11,7 +11,10 @@ int main(int argc, char* argv[]) {
 
 	istream* in = & cin;
 	ifstream file;
-
+	cout << "argc:"<<argc << endl;
+	for (int i = 0; i < argc; i++) {
+		cout << "agrv[" << i << "]:" << argv[i] << endl;
+	}
 	if (argc == 1) {
 		cout << "MISSING COMMAND" << endl;
 		return 1;

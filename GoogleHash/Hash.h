@@ -33,7 +33,7 @@ public:
 	void HashCreate(); // Create L, A. T will have m slots; A should be 15m
 	bool HashEmpty(); // Check if L is empty
 	
-	bool HashFull(); // Check if L can maintain more words
+	bool Htable_Not_Enough(); // Check if L can maintain more words
 	bool Wtable_Not_Enough(); // Check if L can maintain more words
 	
 	void HashPrint(); // Print of L
@@ -45,7 +45,7 @@ public:
 	void HashBatch(string filename);
 
 	int HashFunction(int result, int factor);
-	int AsciiSum();
+	
 
 	void HashAdjust();
 	void WordsAdjust();
@@ -61,8 +61,12 @@ public:
 
 };
 
+class utils {
+	friend class Hash;
+public: 
+	int AsciiSum(string w);
+	int Bit_Int(int n);
 
-
-
+};
 
 #endif 
