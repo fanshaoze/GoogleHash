@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	if (argc == 2) {
 		file.open(argv[1]);
 		if (!file.is_open()) {
-			cout << argv[2] << " FILE COULD NOT BE OPENED" << endl;
+			cout << argv[1] << " FILE COULD NOT BE OPENED" << endl;
 			return 1;
 		}
 		in = &file;

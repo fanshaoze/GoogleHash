@@ -1,0 +1,6 @@
+14 11
+10 alex
+10 tom
+10 jerry
+15 ready-to-print CAUTION: 15 is a comment string (chars,numbers,-)
+13

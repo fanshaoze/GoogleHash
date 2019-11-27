@@ -22,6 +22,13 @@ public:
 	//char* w;
 };
 
+class utils {
+	friend class Hash;
+public:
+	int AsciiSum(string w);
+	int Bit_Int(int n);
+
+};
 
 
 class Hash{
@@ -57,16 +64,11 @@ public:
 	lexicon L;
 	string w;
 	int Function_Code;
+	utils U;
 	//int 
 
 };
 
-class utils {
-	friend class Hash;
-public: 
-	int AsciiSum(string w);
-	int Bit_Int(int n);
 
-};
 
 #endif 

@@ -15,6 +15,7 @@ Hash::Hash(int init_size, string str, int init_incf, int init_Lfactor, int init_
 	L.Lfactor = init_Lfactor;
 	L.Wtable_size = L.Lfactor * L.Htable_size;
 	L.Record_num = 0;
+	L.letter_num = 0;
 	Function_Code = init_FCode;
 }
 
@@ -25,6 +26,7 @@ Hash::~Hash() {
 
 void Hash::HashCreate() // Create T, A. T will have m slots; A should be 15m
 {
+	cout << "wordtable size: " << L.Wtable_size << " and Hashtable size: " << L.Htable_size << endl;
 	L.Wordstable = new char[L.Wtable_size];
 	for (int i = 0; i < L.Wtable_size; i++)
 		L.Wordstable[i] = '\0';
@@ -57,27 +59,53 @@ void Hash::HashPrint() // Print of L
 	cout << "T" << endl;
 	for (int i = 0; i < L.Htable_size; i++) {
 		cout.width(Bits);
-		cout << i << ":";
-		cout << L.Hashtable[i] << endl;
+		cout << i << ": ";
+		if (L.Hashtable[i] == -1) cout  << endl;
+		else cout << L.Hashtable[i] << endl;
 	}
 	cout << "A" << endl;
-	for (int i = 0; i < L.Htable_size; i++) {
-		cout << L.Wordstable[i];
+	for (int i = 0; i < L.letter_num; i++) {
+		if (L.Wordstable[i] == '\0') cout<<'\\';
+		else cout << L.Wordstable[i];
 	}
+	return;
 }
 
 bool Hash::HashInsert() //Insert w into L (and T and A)
 {
 	//actually it should be a......recursive function......we need to write down 
 	
-	
+	int j = 0;
 	//HashFunction();
-
+	int index;
+	int origin_letter_num = L.letter_num;
 	if (Htable_Not_Enough() || Wtable_Not_Enough()) {
+		cout <<"Htable/Wtable Not Enough"<<endl;
+		HashAdjust();
+		return 0;
+	}
+
+
+
+	for (int i = 0; i < L.Htable_size; i++) {
+		index = HashFunction(U.AsciiSum(w), i);
+		cout << "Insert index:" << index << endl;
+		if (L.Hashtable[index] == -1) break;
+		j++;
+	}
+	if (j == L.Htable_size - 1) {
+		cout << "No proper place for new word" << endl;
 		HashAdjust();
 	}
-	L.Record_num++;
-	L.letter_num += w.length() + 1;
+
+	else {
+		L.Hashtable[index] = origin_letter_num;
+		for (int i = L.letter_num; i < L.letter_num + w.length(); i++) L.Wordstable[i] = w[i - L.letter_num];
+		L.Wordstable[L.letter_num + w.length()] = '\0';
+		L.Record_num++;
+		L.letter_num += w.length() + 1;
+		
+	}
 
 	return 0;
 }
@@ -95,7 +123,7 @@ int Hash::HashDelete() //Delete w from L (but not necessarily from A)
 
 int Hash::HashSearch() //Search for string in L (and this means T)
 {
-	utils U;
+	//utils U;
 	int HashIndex = -1;
 	//diectly search -1 for not get one
 	int WordSum = U.AsciiSum(w);
@@ -126,7 +154,9 @@ void Hash::HashAdjust()
 	bool cflag = false;
 	int ori_Htable_size = L.Htable_size;
 	int ori_Wtable_size = L.Wtable_size;
-	utils U;
+	int ori_Record_num = L.Record_num;
+	int ori_letter_num = L.letter_num;
+	int j = 0;
 
 	//double the size of the Hash table and readjust the Hash
 	while(!cflag){
@@ -135,36 +165,45 @@ void Hash::HashAdjust()
 		int index = -1;
 		string cword = "";
 		L.Htable_size = L.incf * L.Htable_size + 1;
-		L.Wtable_size = L.Htable_size * L.Lfactor;
-		if (ori_Wtable_size + w.length() + 1 > L.Wtable_size) {
+		WordsAdjust();
+		if (ori_letter_num + w.length() + 1 > L.Wtable_size) {
 			cflag = false;
 			continue;
 		}
-
+		//Copy the current hash table to Hash temp 
 		int* Hashtmp = new int[ori_Htable_size];
 		for (int i = 0; i < ori_Htable_size; i++) {
 			Hashtmp[i] = L.Hashtable[i];
 		}
-
-		char * Wtabletmp = new char[L.Wtable_size];
-		for (int i = 0; i < ori_Wtable_size; i++) Wtabletmp[i] = L.Wordstable[i];
-		for (int i = ori_Wtable_size; i < ori_Wtable_size + w.length(); i++) Wtabletmp[i] = w[i];
-		for (int i = ori_Wtable_size + w.length(); i < L.Wtable_size; i++) Wtabletmp[i] = '\0';
+		//Copy the current word table to Hash temp, including the inserting word w
+		char * Wtabletmp = new char[ori_Wtable_size];
+		for (int i = 0; i < ori_letter_num; i++) Wtabletmp[i] = L.Wordstable[i];
+		for (int i = ori_letter_num; i < ori_letter_num + w.length(); i++) Wtabletmp[i] = w[i - ori_letter_num];
+		for (int i = ori_letter_num + w.length(); i < L.Wtable_size; i++) Wtabletmp[i] = '\0';
 		
 		delete L.Hashtable;
 		delete L.Wordstable;
+		L.Record_num = 0;
+		L.letter_num = 0;
 		HashCreate();
+
+		//Insert all the exist words in the new hash table  
 
 		for (int i = 0; i < ori_Htable_size; i++) {
 			index = -1;
-			if(Hashtmp[i] != -1) 
+			cout << "hash tmp[" << i << "] : " << Hashtmp[i] << endl;
+			if (Hashtmp[i] != -1) {
 				cword = Wtabletmp[Hashtmp[i]];
-
+				cout << "cword : "<< cword <<" AsciiSum : "<<U.AsciiSum(cword) << endl;
+			}
+			j = 0;
 			for (int i = 0; i < ori_Htable_size; i++) {
 				index = HashFunction(U.AsciiSum(cword), i);
+				cout << "new index : "<<index << endl;
 				if (L.Hashtable[index] != -1) break;
+				j++;
 			}
-			if (index == -1) {
+			if (j == ori_Htable_size - 1) {
 				cflag = false;
 				break;
 			}
@@ -172,19 +211,26 @@ void Hash::HashAdjust()
 		}
 		if (!cflag) break;
 
-		sum = U.AsciiSum(w);
+
+		//Insert w into the hash table 
+		j = 0;
 		for (int i = 0; i < ori_Htable_size; i++) {
-			index = HashFunction(U.AsciiSum(cword), i);
+			index = HashFunction(U.AsciiSum(w) , i);
 			if (L.Hashtable[index] != -1) break;
+			j++;
 		}
-		if (index == -1) {
+		if (j == ori_Htable_size - 1) {
 			cflag = false;
-			continue;
+			break;
 		}
-		else L.Hashtable[index] = ori_Wtable_size;
+		else L.Hashtable[index] = ori_letter_num;
 		
 	}
 
+
+
+	L.Record_num = ori_Record_num++;
+	L.letter_num = ori_letter_num + w.length() + 1;
 	
 }
 
@@ -204,7 +250,6 @@ int Hash::HashFunction(int WordSum, int factor)
 	{
 	case 0:
 		return (WordSum % L.Htable_size + factor * factor) % L.Htable_size;
-		
 		break;
 	case 1:
 		return (WordSum % L.Htable_size + factor) % L.Htable_size;
@@ -228,7 +273,8 @@ void Hash::HashOperation(istream& in, ostream& out)
 	string CommandLine = " ";
 
 	for (;;) {
-		CommandLine = in.get();
+		//CommandLine = in.get();
+		getline(in, CommandLine);
 		if (in.eof() || in.bad()) return;
 
 		cout << "CommandLine: " << CommandLine << endl;
@@ -236,13 +282,17 @@ void Hash::HashOperation(istream& in, ostream& out)
 		for (i = 0; i < CommandLine.length(); i++) {
 			if (CommandLine.at(i) == ' ') break;
 		}
-		Command = CommandLine.substr(0, i + 1);
+		Command = CommandLine.substr(0, i+1);
 		cout << "Command: " << Command << endl;
+		cout << "Command length: " << Command.length() << endl;
 		if (Command == "13") {//print
 			if (Command.length() != CommandLine.length()) return;
 			else HashPrint();
 		}
 		else {
+			Command = Command.substr(0, i);
+			cout << "Command: " << Command << endl;
+			cout << "Command length: " << Command.length() << endl;
 			para = CommandLine.substr(i + 1, CommandLine.length() - (i + 1));
 			cout << "para: " << para << endl;
 			cout << "para size: " << para.length() << endl;
@@ -251,6 +301,7 @@ void Hash::HashOperation(istream& in, ostream& out)
 					if (!isdigit(para[i])) return;
 				}
 				L.Htable_size = stoi(para);
+				WordsAdjust();
 				cout << "Htable_size: " << L.Htable_size << endl;
 				HashCreate();
 			}
