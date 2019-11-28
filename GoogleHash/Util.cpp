@@ -23,5 +23,6 @@ int utils::AsciiSum(string w)
 	int WordSum = 0;
 	for (int i = 0; i < w.length(); i++)
 		WordSum += w[i];
+	cout << "asc sum of \"" << w << "\" is " << WordSum << endl;
 	return WordSum;
 }

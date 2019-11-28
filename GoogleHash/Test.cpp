@@ -6,11 +6,11 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-	Hash GoogleHash(10, " ", 15, 2, 0);
+	Hash GoogleHash(10, " ", 2, 15, 0);
 	string cmd(argv[1]);
 
 	istream* in = & cin;
-	ifstream file;
+	ifstream file; 
 	cout << "argc:"<<argc << endl;
 	for (int i = 0; i < argc; i++) {
 		cout << "agrv[" << i << "]:" << argv[i] << endl;

@@ -34,7 +34,7 @@ public:
 class Hash{
 
 public:
-	Hash(int init_size = 10, string str = " ",int init_Lfactor = 15, int init_incf = 2, int init_FCode = 0);//?????????
+	Hash(int init_size = 10, string str = " ",int init_incf = 2, int init_Lfactor = 15, int init_FCode = 0);//?????????
 	~Hash();
 
 	void HashCreate(); // Create L, A. T will have m slots; A should be 15m
@@ -61,7 +61,7 @@ public:
 
 
 	//-------------------------------------------------------------------
-	lexicon L;
+	lexicon *L;
 	string w;
 	int Function_Code;
 	utils U;
