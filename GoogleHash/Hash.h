@@ -39,7 +39,7 @@ public:
 
 	void HashCreate(); // Create L, A. T will have m slots; A should be 15m
 	bool HashEmpty(); // Check if L is empty
-	
+	bool HashFull(); // Check if L is empty
 	bool Htable_Not_Enough(); // Check if L can maintain more words
 	bool Wtable_Not_Enough(); // Check if L can maintain more words
 	

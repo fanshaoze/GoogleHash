@@ -2,26 +2,12 @@
 10 alex
 10 tom
 10 jerry
-10 ryan
-10 fan
-10 sahu
-10 qiu
-10 zhang
-10 patel
-10 join
-10 james
-10 hhash
-10 alexa
-10 tomb
-10 jerryc
-10 ryand
-10 fane
-10 sahuf
-10 qiug
-10 zhanhg
-10 patelj
-10 joink
-10 jamesl
-10 hhashi
 15 ready-to-print CAUTION: 15 is a comment string (chars,numbers,-)
 13
+12 alex
+12 tom
+12 jerry
+12 mary
+11 tom
+13
+

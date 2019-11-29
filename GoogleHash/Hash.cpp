@@ -42,9 +42,14 @@ bool Hash::HashEmpty() // Check if L is empty
 	return L->Record_num == 0 ? true : false;
 }
 
+bool Hash::HashFull() // Check if L is full
+{
+	//find out whether hash is full or not 
+	return L->Record_num == L->Htable_size ? true : false;
+}
+
 bool Hash::Htable_Not_Enough() // Check if L can maintain more words
 {
-	cout << "Hash table enough? hash added:" << L->Record_num + 1 << " size:"<< L->Htable_size << endl;
 	return L->Record_num + 1 > L->Htable_size ? true : false;
 }
 
@@ -65,7 +70,7 @@ void Hash::HashPrint() // Print of L
 		if (L->Hashtable[i] == -1) cout  << endl;
 		else cout << L->Hashtable[i] << endl;
 	}
-	cout << "A" << endl;
+	cout << "A: ";
 	for (int i = 0; i < L->letter_num; i++) {
 		if (L->Wordstable[i] == '\0') cout<<'\\';
 		else cout << L->Wordstable[i];
@@ -119,9 +124,15 @@ int Hash::HashDelete() //Delete w from L (but not necessarily from A)
 	we just need to delete one in the L-> But according to the input here, if not we assign no 
 	*/
 	int HashIndex = HashSearch();
-	if (HashIndex != -1) 
-		L->Hashtable[HashIndex] = -1;
-	return 0;
+
+	if (HashIndex == -1) return HashIndex;
+	for (int i = L->Hashtable[HashIndex]; i < L->Hashtable[HashIndex] + w.length(); i++) {
+		L->Wordstable[i] = '*';
+	}
+	L->Hashtable[HashIndex] = -1;
+	L->Record_num--;
+	return HashIndex;
+	
 }
 
 int Hash::HashSearch() //Search for string in L (and this means T)
@@ -335,10 +346,22 @@ void Hash::HashOperation(istream& in, ostream& out)
 					HashInsert();
 				}
 				else if (Command == "11") {
-					HashDelete();
+					int DeleteResult;
+					DeleteResult = HashDelete();
+					if (DeleteResult != -1)
+						cout << w << "\t deleted from slot " << DeleteResult << endl;
+					else
+						cout << w << "\t not found" << endl;
+
 				}
 				else if (Command == "12") {
-					HashSearch();
+					int FoundResult;
+					FoundResult = HashSearch();
+					if (FoundResult != -1) 
+						cout << w << "\t found at slot " << FoundResult << endl;
+					else 
+						cout << w <<"\t not found"<< endl;
+						
 				}
 				else if (Command == "15") {
 					continue;
